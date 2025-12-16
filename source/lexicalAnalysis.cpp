@@ -127,16 +127,16 @@ void outPutToken(Token &token, TokenType &tokenType, string &words,
             << " " << token.colNum << " }" << endl;
     words = "";
     tokenType = UNKNOWN;
+  } else if (tokenType == ERROR) {
+    token.type = tokenType;
+    token.value = words;
+    cout << "Error: Invalid token at lineNum " << token.lineNum
+         << ", colNumumn " << token.colNum << endl;
+    cout << "{ " << token.type << " " << token.value << " " << token.lineNum
+         << " " << token.colNum << " }" << endl;
+    words = "";
+    tokenType = UNKNOWN;
   }
-}
-
-void outPutError(Token &token, TokenType &tokenType, string &words) {
-  cout << "Error: Invalid token at lineNum " << token.lineNum << ", colNumumn "
-       << token.colNum << endl;
-  cout << "{ " << token.type << " " << token.value << " " << token.lineNum
-       << " " << token.colNum << " }" << endl;
-  words = "";
-  tokenType = UNKNOWN;
 }
 
 void lexicalAnalysis(string code, ofstream &outFile) {
@@ -148,7 +148,8 @@ void lexicalAnalysis(string code, ofstream &outFile) {
   for (int i = 0; i < stringSize; i++) {
     char scanWord = code[i];
     if (scanWord == ' ') { // 特殊字符
-      if (tokenType == IDENTIFIER || tokenType == INTEGER || tokenType == FLOAT) {
+      if (tokenType == IDENTIFIER || tokenType == INTEGER ||
+          tokenType == FLOAT) {
         token.lineNum = lineNum;
         token.colNum = colNum - words.size();
         outPutToken(token, tokenType, words, outFile);
@@ -160,7 +161,7 @@ void lexicalAnalysis(string code, ofstream &outFile) {
       } else if (tokenType == ERROR) {
         token.lineNum = lineNum;
         token.colNum = colNum - words.size();
-        outPutError(token, tokenType, words);
+        outPutToken(token, tokenType, words, outFile);
       }
       colNum++;
     } else if (scanWord == '\t') { // 特殊字符
@@ -199,9 +200,6 @@ void lexicalAnalysis(string code, ofstream &outFile) {
           words += scanWord;
           colNum++;
         }
-      } else if (tokenType == COMMENT) {
-        words += scanWord;
-        colNum++;
       } else { // 如INTEGER类型时遇见字母
         tokenType = ERROR;
         words += scanWord;
@@ -214,19 +212,16 @@ void lexicalAnalysis(string code, ofstream &outFile) {
         tokenType = INTEGER;
       }
     } else if (scanWord == '.') {
-      if(tokenType == UNKNOWN) {
-        tokenType = FLOAT;
-      }else if (tokenType == INTEGER) {
-        tokenType = FLOAT;
-      } else if (tokenType == FLOAT) {
+      if (tokenType == UNKNOWN || tokenType == FLOAT) {
         tokenType = ERROR;
+      } else if (tokenType == INTEGER) {
+        tokenType = FLOAT;
       }
       words += scanWord;
       colNum++;
     } else if (scanWord == '=' || scanWord == '+' || scanWord == '-' ||
-               scanWord == '*' || scanWord == '(' ||
-               scanWord == ')') {
-      if (tokenType == STRING || tokenType == CHARACTER) {
+               scanWord == '*' || scanWord == '(' || scanWord == ')') {
+      if (tokenType == STRING || tokenType == CHARACTER || tokenType == COMMENT) {
         words += scanWord;
         colNum++;
         continue;
@@ -251,6 +246,8 @@ void lexicalAnalysis(string code, ofstream &outFile) {
         token.lineNum = lineNum;
         token.colNum = colNum - words.size();
         outPutToken(token, tokenType, words, outFile);
+      } else if (tokenType == IDENTIFIER || tokenType == INTEGER || tokenType == FLOAT) {
+        tokenType = ERROR;
       }
     } else if (scanWord == '\'') {
       words += scanWord;
@@ -258,6 +255,9 @@ void lexicalAnalysis(string code, ofstream &outFile) {
       if (tokenType == UNKNOWN) {
         tokenType = CHARACTER;
       } else if (tokenType == CHARACTER) {
+        if (words.size() > 3 || words.size() == 2) {
+          tokenType = ERROR;
+        }
         token.lineNum = lineNum;
         token.colNum = colNum - words.size();
         outPutToken(token, tokenType, words, outFile);
@@ -269,6 +269,9 @@ void lexicalAnalysis(string code, ofstream &outFile) {
         tokenType = COMMENT;
       }
     } else {
+      if (tokenType == IDENTIFIER || tokenType == INTEGER || tokenType == FLOAT) {
+        tokenType = ERROR;
+      }
       words += scanWord;
       colNum++;
     }
@@ -276,6 +279,11 @@ void lexicalAnalysis(string code, ofstream &outFile) {
   if (tokenType == COMMENT) {
     token.lineNum = lineNum;
     token.colNum = colNum;
+    outPutToken(token, tokenType, words, outFile);
+  } else if (tokenType == CHARACTER || tokenType == STRING) {
+    tokenType = ERROR;
+    token.lineNum = lineNum;
+    token.colNum = colNum - words.size();
     outPutToken(token, tokenType, words, outFile);
   }
 }
