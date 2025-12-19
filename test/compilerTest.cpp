@@ -1,4 +1,5 @@
 #include "lexicalAnalysis.hpp"
+#include "grammaticalAnalysis.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -10,9 +11,10 @@ int lineNum = 0;
 int colNum = 1;
 
 int main() {
-  // 正确测试用例路径：../build/program.cpp
-  // 错误测试用例路径：../build/errorProgram.cpp
-  string inputFilePath = "../build/errorProgram.cpp";
+  cout << "===========Lexical Analysis=============" << endl;
+  // 正确输入测试用例路径：../build/program.cpp
+  // 错误输入测试用例路径：../build/errorProgram.cpp
+  string inputFilePath = "../build/program.cpp";
   string outputFilePath = "../build/tokens.txt";
 
   ifstream inFile(inputFilePath);
@@ -46,5 +48,8 @@ int main() {
   cout << "\nTokens has been successfully output to ../build/tokens.txt"
        << endl;
   cout << '\n';
+
+  cout << "===========Grammatical Analysis=============" << endl;
+  GrammaticalAnalysis("abccd#");
   return 0;
 }
