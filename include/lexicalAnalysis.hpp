@@ -5,18 +5,18 @@
 using namespace std;
 
 enum TokenType {
-    KEYWORD,  // 关键字
-    IDENTIFIER,  // 标识符
-    INTEGER,  // 整数
-    FLOAT,  // 浮点数
-    CHARACTER,  // 字符
-    STRING,  // 字符串
-    BOOLEAN,  // 布尔值
-    OPERATOR,  // 运算符
-    DELIMITER,  // 分隔符
-    COMMENT,  // 注释(当前只支持单行注释)
-    UNKNOWN,  // 未知
-    ERROR,  // 错误
+    KEYWORD = 0,      // 0
+    IDENTIFIER = 1,   // 1
+    INTEGER = 2,      // 2
+    FLOAT = 3,        // 3
+    CHARACTER = 4,    // 4
+    STRING = 5,       // 5
+    BOOLEAN = 6,      // 6
+    OPERATOR = 7,     // 7
+    DELIMITER = 8,    // 8
+    COMMENT = 9,      // 9
+    UNKNOWN = 10,     // 10
+    ERROR = 11        // 11
 };
 
 // 定义Token结构
