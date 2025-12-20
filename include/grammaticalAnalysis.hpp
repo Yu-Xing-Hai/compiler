@@ -1,5 +1,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
-void GrammaticalAnalysis(std::string inputBelt);
+using namespace std;
+
+void GrammaticalAnalysis(vector<string> inputBelt);

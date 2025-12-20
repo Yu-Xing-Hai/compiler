@@ -15,6 +15,7 @@ unordered_set<string> keyWord = {
     "bool",
     "void",
     "float",
+    "string",
     // 控制流
     "if",
     "else",
@@ -25,6 +26,7 @@ unordered_set<string> keyWord = {
     "continue",
     "return",
     // 其他
+    "main",
     "const",
     "struct",
     "enum",
@@ -169,7 +171,9 @@ void lexicalAnalysis(string code, ofstream &outFile) {
       if (tokenType == STRING) {
         words += scanWord;
       }
-    } else if (scanWord == ';') { // 特殊字符
+    } else if (scanWord == ';' || scanWord == ',' || scanWord == '(' ||
+               scanWord == ')' || scanWord == '{' || scanWord == '}' ||
+               scanWord == '[' || scanWord == ']') { // 特殊分隔字符
       if (tokenType == STRING || tokenType == CHARACTER) {
         words += scanWord;
         colNum++;
@@ -180,7 +184,7 @@ void lexicalAnalysis(string code, ofstream &outFile) {
         token.colNum = colNum - words.size();
         outPutToken(token, tokenType, words, outFile);
       }
-      words += ";";
+      words += scanWord;
       tokenType = DELIMITER;
       token.lineNum = lineNum;
       token.colNum = colNum;
@@ -220,8 +224,9 @@ void lexicalAnalysis(string code, ofstream &outFile) {
       words += scanWord;
       colNum++;
     } else if (scanWord == '=' || scanWord == '+' || scanWord == '-' ||
-               scanWord == '*' || scanWord == '(' || scanWord == ')') {
-      if (tokenType == STRING || tokenType == CHARACTER || tokenType == COMMENT) {
+               scanWord == '*') {
+      if (tokenType == STRING || tokenType == CHARACTER ||
+          tokenType == COMMENT) {
         words += scanWord;
         colNum++;
         continue;
@@ -246,7 +251,8 @@ void lexicalAnalysis(string code, ofstream &outFile) {
         token.lineNum = lineNum;
         token.colNum = colNum - words.size();
         outPutToken(token, tokenType, words, outFile);
-      } else if (tokenType == IDENTIFIER || tokenType == INTEGER || tokenType == FLOAT) {
+      } else if (tokenType == IDENTIFIER || tokenType == INTEGER ||
+                 tokenType == FLOAT) {
         tokenType = ERROR;
       }
     } else if (scanWord == '\'') {
@@ -269,7 +275,8 @@ void lexicalAnalysis(string code, ofstream &outFile) {
         tokenType = COMMENT;
       }
     } else {
-      if (tokenType == IDENTIFIER || tokenType == INTEGER || tokenType == FLOAT) {
+      if (tokenType == IDENTIFIER || tokenType == INTEGER ||
+          tokenType == FLOAT) {
         tokenType = ERROR;
       }
       words += scanWord;
