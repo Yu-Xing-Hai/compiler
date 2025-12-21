@@ -1,0 +1,43 @@
+/*
+作用：编译整个编译器项目（source+test所有cpp文件）
+常用语法：
+${workspaceFolder}：项目根目录
+*/
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C++ Compile",
+            "command": "C:/msys64/ucrt64/bin/g++.exe",
+            "args": [
+                "-g", // 强制生成调试信息，必须放第一个
+                "-O0", // 关闭优化（调试必备，优化会打乱代码行号）
+                "-fdiagnostics-color=always",
+                "-I",
+                "C:/msys64/ucrt64/include/c++/14.2.0",
+                "-I",
+                "${workspaceFolder}/include/",
+                // 源文件放在调试参数之后
+                "${workspaceFolder}/source/*.cpp",
+                "${workspaceFolder}/test/compilerTest.cpp",
+                "-o",
+                "${workspaceFolder}/build/compiler.exe",
+                "-lstdc++", // 链接C++标准库
+                "-fno-eliminate-unused-debug-types",
+                "-fno-strict-aliasing",
+                "-Wall" // 警告参数放最后
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}" // 工作目录设为项目根（适配相对路径）
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

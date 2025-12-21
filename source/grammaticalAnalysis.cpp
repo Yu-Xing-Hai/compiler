@@ -70,19 +70,20 @@ void GrammaticalAnalysis(vector<string> inputBelt) {
       "<FACTOR>"               // 基本因子
   };
 
-  // 终结符集合（无<>括号，与词法分析器Token严格对齐）
+  // 终结符集合（词法分析器必须将"main"识别为关键字）
   unordered_set<string> VT = {
       // 基本类型关键字
       "float", "char", "bool", "string", "int",
       // 控制流关键字
-      "if", "else", "while", "return", "main",
+      "if", "else", "while", "for", "return",
+      "main", // "main"为保留字，非IDENTIFIER
       // 布尔字面量
       "true", "false",
       // 运算符
       "+", "-", "*", "/", "=", "==", "!=", ">", "<", ">=", "<=", "&&", "||",
       // 分隔符
       ";", "{", "}", "(", ")",
-      // 词法Token（大写标识，与关键字区分）
+      // 词法Token
       "IDENTIFIER", "INTEGER", "FLOAT", "CHAR", "STRING",
       // 结束符
       "#"};
@@ -384,7 +385,7 @@ void GrammaticalAnalysis(vector<string> inputBelt) {
 
     // 情况一
     if (stackTop == endSymbol) {
-      if (currentSymbol == endSymbol) { // 输入也到#，才是真成功
+      if (currentSymbol == endSymbol) {
         flag = true;
         break;
       } else {

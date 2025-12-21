@@ -10,6 +10,7 @@ using namespace std;
 
 int lineNum = 0;
 int colNum = 1;
+bool compilerStatus = true;
 
 int main() {
   cout << "===========Lexical Analysis=============" << endl;
@@ -119,13 +120,18 @@ int main() {
   }
   inputBelt.push_back("#");
 
+  if (!compilerStatus) {
+    cerr << "Error: Lexical error, terminate analysis" << endl;
+    return 1;
+  }
+
   // 调试用：打印生成的输入流，验证是否正确
   cout << "Generated grammatical input stream:\n";
   for (const auto &s : inputBelt) {
     cout << s << " ";
   }
-  cout << '\n';
-
+  cout << '\n' << endl;
+  
   cout << "===========Grammatical Analysis=============" << endl;
   GrammaticalAnalysis(inputBelt);
   tokensFile.close();

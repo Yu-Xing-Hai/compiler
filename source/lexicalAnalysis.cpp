@@ -130,6 +130,7 @@ void outPutToken(Token &token, TokenType &tokenType, string &words,
     words = "";
     tokenType = UNKNOWN;
   } else if (tokenType == ERROR) {
+    compilerStatus = false;
     token.type = tokenType;
     token.value = words;
     cout << "Error: Invalid token at lineNum " << token.lineNum
@@ -149,7 +150,10 @@ void lexicalAnalysis(string code, ofstream &outFile) {
   Token token = {UNKNOWN, "", lineNum, colNum};
   for (int i = 0; i < stringSize; i++) {
     char scanWord = code[i];
-    if (scanWord == ' ') { // 特殊字符
+    if (tokenType == COMMENT) {
+      words += scanWord;
+      colNum++;
+    } else if (scanWord == ' ') { // 特殊字符
       if (tokenType == IDENTIFIER || tokenType == INTEGER ||
           tokenType == FLOAT) {
         token.lineNum = lineNum;
@@ -157,9 +161,6 @@ void lexicalAnalysis(string code, ofstream &outFile) {
         outPutToken(token, tokenType, words, outFile);
       } else if (tokenType == CHARACTER || tokenType == STRING) {
         words += ' ';
-      } else if (tokenType == COMMENT) {
-        words += scanWord;
-        colNum++;
       } else if (tokenType == ERROR) {
         token.lineNum = lineNum;
         token.colNum = colNum - words.size();
@@ -223,8 +224,8 @@ void lexicalAnalysis(string code, ofstream &outFile) {
       }
       words += scanWord;
       colNum++;
-    } else if (scanWord == '=' || scanWord == '+' || scanWord == '-' ||
-               scanWord == '*') {
+    } else if (scanWord == '=' || scanWord == '<' || scanWord == '>' ||
+               scanWord == '+' || scanWord == '-' || scanWord == '*') {
       if (tokenType == STRING || tokenType == CHARACTER ||
           tokenType == COMMENT) {
         words += scanWord;

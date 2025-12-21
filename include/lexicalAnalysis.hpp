@@ -29,5 +29,6 @@ struct Token {
 
 extern int lineNum;
 extern int colNum;
+extern bool compilerStatus;
 
 void lexicalAnalysis(string code, ofstream& outFile);
